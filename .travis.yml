@@ -1,0 +1,29 @@
+dist: trusty
+language: php
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+services:
+  - mysql
+sudo: required
+env:
+  matrix:
+  - MAGE_VER=2.1.7 TEST_SUITE=phpunit
+  - MAGE_VER=2.1.8 TEST_SUITE=phpunit
+  - MAGE_VER=2.1.9 TEST_SUITE=phpunit
+  - MAGE_VER=2.1.7 TEST_SUITE=integration
+  - MAGE_VER=2.1.8 TEST_SUITE=integration
+  - MAGE_VER=2.1.9 TEST_SUITE=integration
+
+before_install:
+  - test -n "$GITHUB_TOKEN" && echo "Found GitHub token" && composer config github-oauth.github.com "$GITHUB_TOKEN" || echo "No GitHub token found"
+  - test -n "$NODE_JS_VERSION" && . $HOME/.nvm/nvm.sh && nvm install "$NODE_JS_VERSION" && nvm use "$NODE_JS_VERSION" || true
+  - composer selfupdate
+  - composer require "squizlabs/php_codesniffer":"3.*" "magento-ecg/coding-standard":">=3.0"
+  - composer require "phpmd/phpmd":"@stable"
+  - git clone https://github.com/magento/magento2
+  - echo Setting Magento version ${MAGE_VER}
+  - git checkout tags/${MAGE_VER} -b ${MAGE_VER}
+  - composer install
+
