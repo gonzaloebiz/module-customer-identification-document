@@ -26,4 +26,5 @@ before_install:
   - echo Setting Magento version ${MAGE_VER}
   - git checkout tags/${MAGE_VER} -b ${MAGE_VER}
   - composer install
+  - echo After install
 
